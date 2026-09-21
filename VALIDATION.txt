@@ -1,0 +1,67 @@
+Video Error Hunt validation
+Rule source: EduardoKrausME/moodle-plugin-validate main @ 826c10c17679963e82697de61ac07c8d4e6d0415, inspected via GitHub connector on 2026-09-20
+Applicable rules mirrored locally because the execution container has no outbound GitHub DNS/network access.
+
+[PASS] repository: License file exists.
+[PASS] repository: README.md exists.
+[PASS] repository: db/upgrade.php exists for activity module.
+[PASS] version: Component is mod_videoerrorhunt.
+[PASS] version: Numeric version is 2026092000.
+[PASS] pluginname: English string 'pluginname' exists and is non-empty.
+[PASS] pluginname: English string 'pluginadministration' exists and is non-empty.
+[PASS] installxml: db/install.xml is well-formed XML.
+[PASS] installxml: XMLDB PATH matches mod/videoerrorhunt/db.
+[PASS] installxml: XMLDB VERSION 20260920 is a valid date.
+[PASS] installxml: XMLDB COMMENT is present.
+[PASS] installxml: XMLDB schema location matches path depth.
+[PASS] installxml: XMLDB structural validation passed.
+[PASS] mod_supports: FEATURE_MOD_ARCHETYPE returns MOD_ARCHETYPE_ASSIGNMENT.
+[PASS] mod_supports: FEATURE_GROUPS returns false.
+[PASS] mod_supports: FEATURE_GROUPINGS returns false.
+[PASS] mod_supports: FEATURE_MOD_INTRO returns true.
+[PASS] mod_supports: FEATURE_COMPLETION_TRACKS_VIEWS returns true.
+[PASS] mod_supports: FEATURE_COMPLETION_HAS_RULES returns true.
+[PASS] mod_supports: FEATURE_GRADE_HAS_GRADE returns true.
+[PASS] mod_supports: FEATURE_BACKUP_MOODLE2 returns true.
+[PASS] mod_supports: FEATURE_MOD_PURPOSE returns MOD_PURPOSE_ASSESSMENT.
+[PASS] mod_supports: Unknown features fall back to null.
+[PASS] mod_course_contents: cached_cm_info uses valid return properties.
+[PASS] mod_backup_restore: backup/moodle2/backup_videoerrorhunt_activity_task.class.php exists.
+[PASS] mod_backup_restore: backup/moodle2/backup_videoerrorhunt_stepslib.php exists.
+[PASS] mod_backup_restore: backup/moodle2/restore_videoerrorhunt_activity_task.class.php exists.
+[PASS] mod_backup_restore: backup/moodle2/restore_videoerrorhunt_stepslib.php exists.
+[PASS] mod_backup_restore: backup_videoerrorhunt_activity_task has required task structure.
+[PASS] mod_backup_restore: restore_videoerrorhunt_activity_task has required task structure.
+[PASS] mod_backup_restore: backup_activity_structure_step structure step is valid.
+[PASS] mod_backup_restore: restore_activity_structure_step structure step is valid.
+[PASS] db_references: mod_videoerrorhunt\external\update_progress exists.
+[PASS] external_api: mod_videoerrorhunt\external\update_progress::execute_parameters uses external_function_parameters.
+[PASS] external_api: mod_videoerrorhunt\external\update_progress::execute validates parameters.
+[PASS] external_api: mod_videoerrorhunt\external\update_progress::execute validates context.
+[PASS] db_references: mod_videoerrorhunt\external\add_mark exists.
+[PASS] external_api: mod_videoerrorhunt\external\add_mark::execute_parameters uses external_function_parameters.
+[PASS] external_api: mod_videoerrorhunt\external\add_mark::execute validates parameters.
+[PASS] external_api: mod_videoerrorhunt\external\add_mark::execute validates context.
+[PASS] db_references: mod_videoerrorhunt\external\finish_hunt exists.
+[PASS] external_api: mod_videoerrorhunt\external\finish_hunt::execute_parameters uses external_function_parameters.
+[PASS] external_api: mod_videoerrorhunt\external\finish_hunt::execute validates parameters.
+[PASS] external_api: mod_videoerrorhunt\external\finish_hunt::execute validates context.
+[PASS] access: Capability language string videoerrorhunt:addinstance exists.
+[PASS] access: Capability language string videoerrorhunt:view exists.
+[PASS] access: Capability language string videoerrorhunt:submit exists.
+[PASS] access: Capability language string videoerrorhunt:viewreport exists.
+[PASS] access: Capability language string videoerrorhunt:manageerrors exists.
+[PASS] subplugin: No subplugin declaration to validate.
+[PASS] message_provider: No message providers declared.
+[PASS] cache: No cache definitions declared.
+[PASS] privacy: All 11 literal privacy:* keys exist in English language file.
+[PASS] get_string: All 122 static plugin string references resolve in English.
+[PASS] translationplaceholder: pt_br contains the same 121 keys as en.
+[PASS] translationplaceholder: Translation placeholders match English.
+[PASS] ajax: No legacy direct AJAX endpoints detected.
+[PASS] javascript: No large inline HTML fragments detected in JS sources.
+[PASS] mustacheurl: Mustache href/src values use triple braces.
+[PASS] extra:php_lint: All PHP files pass php -l.
+[PASS] extra:js_syntax: AMD source/build pass node --check.
+
+SUMMARY: 61 pass, 0 warning, 0 error

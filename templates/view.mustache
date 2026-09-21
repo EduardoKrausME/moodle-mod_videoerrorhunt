@@ -1,0 +1,149 @@
+{{!
+    This file is part of Moodle - https://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+@template mod_videoerrorhunt/view
+}}
+<div class="videoerrorhunt" data-region="videoerrorhunt" data-config="{{configjson}}">
+    <header class="videoerrorhunt-header">
+        <h2>{{{name}}}</h2>
+        <div>
+            {{#canviewreport}}<a class="btn btn-outline-primary" href="{{{reporturl}}}">{{#str}}
+                report, videoerrorhunt{{/str}}</a>{{/canviewreport}}
+            {{#canedit}}<a class="btn btn-outline-secondary" href="{{{editurl}}}">{{#str}}
+                editsettings, videoerrorhunt{{/str}}</a>{{/canedit}}
+        </div>
+    </header>
+    {{#hasintro}}
+        <div class="videoerrorhunt-intro">{{{intro}}}</div>{{/hasintro}}
+
+    <div class="videoerrorhunt-player" data-region="player">
+        {{#player.isupload}}
+            <video data-region="native-video" controls preload="metadata"
+                   src="{{{player.url}}}"></video>{{/player.isupload}}
+        {{#player.isurl}}
+            <video data-region="native-video" controls preload="metadata"
+                   src="{{{player.url}}}"></video>{{/player.isurl}}
+        {{#player.isyoutube}}
+            <div class="videoerrorhunt-embed" data-region="youtube"
+                 data-videoid="{{player.youtubeid}}"></div>{{/player.isyoutube}}
+        {{#player.isvimeo}}
+            <iframe class="videoerrorhunt-embed" data-region="vimeo"
+                    src="{{{player.vimeoembedurl}}}"
+                    allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe>{{/player.isvimeo}}
+    </div>
+
+    {{#cansubmit}}
+        <section class="videoerrorhunt-hunt">
+            <p class="videoerrorhunt-instruction">{{huntinstruction}}</p>
+            <div class="videoerrorhunt-stats">
+                <div><strong data-region="percent">{{progresspercent}}%</strong><span>{{#str}}
+                    watched, videoerrorhunt{{/str}}</span></div>
+                {{#feedbackrevealed}}
+                    <div><strong data-region="found">{{foundcount}} / {{totalerrors}}</strong><span>{{#str}}
+                        errorsfound, videoerrorhunt{{/str}}</span></div>
+                    <div><strong data-region="remaining">{{remainingcount}}</strong><span>{{#str}}
+                        errorsremaining, videoerrorhunt{{/str}}</span></div>
+                    <div><strong data-region="score">{{score}} / {{maxscore}}</strong><span>{{#str}}
+                        score, videoerrorhunt{{/str}}</span></div>
+                {{/feedbackrevealed}}
+                {{#feedbackhidden}}
+                    <div><strong>{{marksused}}{{#hasmarklimit}} / {{maxmarks}}{{/hasmarklimit}}</strong><span>{{#str}}
+                        marksregistered, videoerrorhunt{{/str}}</span></div>{{/feedbackhidden}}
+            </div>
+
+            <div class="videoerrorhunt-timeline" aria-label="{{#str}}timeline, videoerrorhunt{{/str}}">
+                {{#segments}}<span class="videoerrorhunt-watchsegment"
+                                   style="left:{{left}}%;width:{{width}}%"></span>{{/segments}}
+                {{#markpins}}
+                    <button type="button" class="videoerrorhunt-pin" style="left:{{left}}%" data-action="seek"
+                            data-time="{{timecode}}" title="{{timecode}}"></button>{{/markpins}}
+            </div>
+
+            {{#canmark}}
+                <div class="videoerrorhunt-markbox">
+                    <label for="videoerrorhunt-explanation">{{#str}}explanation, videoerrorhunt{{/str}}</label>
+                    <textarea id="videoerrorhunt-explanation" class="form-control" rows="3"
+                              data-region="explanation"></textarea>
+                    <button type="button" class="btn btn-danger mt-2" data-action="mark">{{#str}}
+                        ifoundanerror, videoerrorhunt{{/str}}</button>
+                    <span class="videoerrorhunt-currenttime" data-region="current-time">00:00</span>
+                </div>
+            {{/canmark}}
+
+            {{#notSubmitted}}
+                <button type="button" class="btn btn-primary mt-3" data-action="finish">{{#str}}
+                    finishhunt, videoerrorhunt{{/str}}</button>{{/notSubmitted}}
+            {{#submitted}}
+                <div class="alert alert-success mt-3">{{#str}}
+                    submittedmessage, videoerrorhunt{{/str}}</div>{{/submitted}}
+            <div class="alert d-none mt-3" data-region="message" role="status"></div>
+        </section>
+
+        <section class="videoerrorhunt-marks">
+            <h3>{{#str}}yourmarks, videoerrorhunt{{/str}}</h3>
+            {{^hasmarks}}<p>{{#str}}nomarks, videoerrorhunt{{/str}}</p>{{/hasmarks}}
+            {{#hasmarks}}
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                        <tr>
+                            <th>{{#str}}time, videoerrorhunt{{/str}}</th>
+                            <th>{{#str}}explanation, videoerrorhunt{{/str}}</th>{{#feedbackrevealed}}
+                            <th>{{#str}}result, videoerrorhunt{{/str}}</th>{{/feedbackrevealed}}</tr>
+                        </thead>
+                        <tbody>{{#marks}}
+                            <tr>
+                                <td>
+                                    <button class="btn btn-link p-0" type="button" data-action="seekseconds"
+                                            data-time="{{timepoint}}">{{timecode}}</button>
+                                </td>
+                                <td>{{explanation}}</td>
+                                {{#reveal}}
+                                    <td>{{#correct}}<span class="badge badge-success">{{#str}}
+                                        correct, videoerrorhunt{{/str}}</span> {{errortitle}}{{/correct}}{{#incorrect}}
+                                        <span class="badge badge-danger">{{#str}}
+                                            incorrect, videoerrorhunt{{/str}}</span>{{/incorrect}}</td>{{/reveal}}
+                            </tr>{{/marks}}</tbody>
+                    </table>
+                </div>
+            {{/hasmarks}}
+        </section>
+    {{/cansubmit}}
+
+    {{#canviewreport}}{{#hasanswerkey}}
+        <section class="videoerrorhunt-answerkey">
+            <h3>{{#str}}answerkey, videoerrorhunt{{/str}}</h3>
+            <div class="table-responsive">
+                <table class="table table-sm">
+                    <thead>
+                    <tr>
+                        <th>{{#str}}errortitle, videoerrorhunt{{/str}}</th>
+                        <th>{{#str}}timerange, videoerrorhunt{{/str}}</th>
+                        <th>{{#str}}errorpoints, videoerrorhunt{{/str}}</th>
+                    </tr>
+                    </thead>
+                    <tbody>{{#answerkey}}
+                        <tr>
+                            <td><strong>{{title}}</strong><br><small>{{{description}}}</small></td>
+                            <td>{{range}}</td>
+                            <td>{{points}}</td>
+                        </tr>{{/answerkey}}</tbody>
+                </table>
+            </div>
+        </section>
+    {{/hasanswerkey}}{{/canviewreport}}
+</div>
