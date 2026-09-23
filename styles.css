@@ -1,1 +1,14 @@
 .videoerrorhunt-header{display:flex;justify-content:space-between;gap:1rem;align-items:center;margin-bottom:1rem}.videoerrorhunt-player{background:#111;max-width:1100px;margin:0 auto 1rem;aspect-ratio:16/9;display:flex;align-items:center;justify-content:center}.videoerrorhunt-player video,.videoerrorhunt-embed{width:100%;height:100%;border:0}.videoerrorhunt-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:.75rem;margin:1rem 0}.videoerrorhunt-stats>div{border:1px solid #ddd;border-radius:.5rem;padding:.75rem;text-align:center}.videoerrorhunt-stats strong{display:block;font-size:1.35rem}.videoerrorhunt-stats span{font-size:.85rem}.videoerrorhunt-timeline{height:18px;background:#ddd;border-radius:9px;position:relative;margin:1rem 0 1.5rem;overflow:visible}.videoerrorhunt-watchsegment{position:absolute;top:0;height:18px;background:#5b9bd5;border-radius:9px}.videoerrorhunt-pin{position:absolute;top:-5px;width:8px;height:28px;border:0;background:#c00;padding:0;transform:translateX(-4px);cursor:pointer}.videoerrorhunt-markbox{border:1px solid #ddd;border-radius:.5rem;padding:1rem}.videoerrorhunt-currenttime{margin-left:1rem;font-weight:600}.videoerrorhunt-marks,.videoerrorhunt-answerkey{margin-top:2rem}@media(max-width:600px){.videoerrorhunt-header{display:block}.videoerrorhunt-header>div{margin-top:.5rem}.videoerrorhunt-player{aspect-ratio:16/9}}
+/* Let the primary player use the full content width and size generated provider iframes. */
+.videoerrorhunt-player {
+    width: 100%;
+    max-width: none;
+    margin-inline: 0;
+}
+
+.videoerrorhunt-player iframe {
+    display: block;
+    width: 100%;
+    height: 100%;
+    border: 0;
+}
