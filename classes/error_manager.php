@@ -97,7 +97,7 @@ class error_manager {
      * @return array Return value.
      */
     public static function add_mark(stdClass $activity, stdClass $cm, int $userid, float $timepoint,
-                                    string   $explanation): array {
+                                    string $explanation): array {
         global $DB;
         $tracker = new tracking_manager();
         $progress = $tracker->get_progress($activity, $userid);

@@ -69,8 +69,8 @@ class update_progress extends external_api {
      * @param string $playerstate Parameter playerstate.
      * @return array Return value.
      */
-    public static function execute(int    $cmid, float $currentposition, float $duration, float $playbackrate,
-                                   float  $segmentstart, float $segmentend, int $sequence, string $sessionkey, int $clienttime,
+    public static function execute(int $cmid, float $currentposition, float $duration, float $playbackrate,
+                                   float $segmentstart, float $segmentend, int $sequence, string $sessionkey, int $clienttime,
                                    string $playerstate): array {
         global $DB, $USER;
         $params = self::validate_parameters(self::execute_parameters(), compact('cmid', 'currentposition', 'duration',
