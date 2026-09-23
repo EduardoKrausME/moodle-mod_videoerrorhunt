@@ -46,11 +46,11 @@ class mod_videoerrorhunt_mod_form extends moodleform_mod {
         $mform->addRule('name', null, 'required', null, 'client');
         $this->standard_intro_elements();
 
-        $mform->addElement('header', 'videosettings', get_string('videosettings', 'videoerrorhunt'));
+        $mform->addElement('html', '<h3>' . get_string('videosettings', 'videoerrorhunt') . '</h3>');
         $mform->addElement('select', 'videosource', get_string('videosource', 'videoerrorhunt'), source_manager::options());
         $mform->setDefault('videosource', 'upload');
         $mform->addElement('filemanager', 'videofile', get_string('videofile', 'videoerrorhunt'), null, [
-            'subdirs' => 0, 'maxfiles' => 1, 'accepted_types' => ['video'],
+            'subdirs' => 0, 'accepted_types' => ['video'],
         ]);
         $mform->hideIf('videofile', 'videosource', 'neq', 'upload');
         $mform->addElement('url', 'directurl', get_string('directurl', 'videoerrorhunt'), ['size' => 80]);
@@ -76,7 +76,7 @@ class mod_videoerrorhunt_mod_form extends moodleform_mod {
         ]);
         $mform->setDefault('maxplaybackrate', '2');
 
-        $mform->addElement('header', 'huntsettings', get_string('huntsettings', 'videoerrorhunt'));
+        $mform->addElement('html', '<h3>' . get_string('huntsettings', 'videoerrorhunt') . '</h3>');
         $mform->addElement('select', 'feedbackmode', get_string('feedbackmode', 'videoerrorhunt'), [
             1 => get_string('feedbackimmediate', 'videoerrorhunt'),
             0 => get_string('feedbackfinal', 'videoerrorhunt'),
@@ -89,7 +89,7 @@ class mod_videoerrorhunt_mod_form extends moodleform_mod {
         $mform->setType('wrongpenalty', PARAM_FLOAT);
         $mform->setDefault('wrongpenalty', 0);
 
-        $mform->addElement('header', 'expectederrors', get_string('expectederrors', 'videoerrorhunt'));
+        $mform->addElement('html', '<h3>' . get_string('expectederrors', 'videoerrorhunt') . '</h3>');
         $mform->addElement('static', 'errorhelp', '', get_string('expectederrorshelp', 'videoerrorhunt'));
         $repeat = [];
         $repeat[] = $mform->createElement('hidden', 'errorid', 0);
@@ -180,6 +180,15 @@ class mod_videoerrorhunt_mod_form extends moodleform_mod {
         }
         if ($completionerrors < 0 || $completionerrors > $definederrors || ($maxmarks > 0 && $completionerrors > $maxmarks)) {
             $errors[$errorsfield] = get_string('completionerrorsexceed', 'videoerrorhunt');
+        }
+        foreach (['videofile'] as $field) {
+            $draftid = (int)($data[$field] ?? 0);
+            if ($draftid > 0) {
+                $draftinfo = file_get_draft_area_info($draftid);
+                if ((int)$draftinfo['filecount'] > 1) {
+                    $errors[$field] = get_string('errormaxfiles', 'videoerrorhunt');
+                }
+            }
         }
         return $errors;
     }
