@@ -34,3 +34,9 @@ administration > Notifications** to install or upgrade the database tables.
 
 The activity requires Moodle 4.4 or later. It does not require external libraries. YouTube and Vimeo playback load their
 official player APIs only when those sources are selected.
+
+
+## Release packaging
+
+Build Marketplace archives with `./build-release.sh`. The script uses `git archive`, so repository metadata such as
+`.git/`, branch history and remote configuration can never be included in the ZIP.

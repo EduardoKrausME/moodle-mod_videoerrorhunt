@@ -67,21 +67,17 @@ class tracking_manager {
             return $progress;
         }
 
-        $duration = max((float)$progress->duration, (float)$payload['duration']);
+        $duration = $this->get_authoritative_duration($activity, (float)$payload['duration']);
         $start = max(0.0, min($duration, (float)$payload['segmentstart']));
         $end = max($start, min($duration, (float)$payload['segmentend']));
         $rate = max(0.25, min((float)$activity->maxplaybackrate ?: 2.0, (float)$payload['playbackrate']));
-        $serverelapsed = $session->lastheartbeat ? max(1, min(20, $now - (int)$session->lastheartbeat)) : 12;
-        $clientelapsed = 0;
-        if ((int)$session->lastclienttime > 0) {
-            $clientelapsed = (int)$payload['clienttime'] - (int)$session->lastclienttime;
-            if ($clientelapsed < 1 || $clientelapsed > 20) {
-                $clientelapsed = 0;
-            }
-        }
-        // Client elapsed time keeps legitimate queued heartbeats usable after a temporary offline period.
-        $elapsed = $clientelapsed > 0 ? max($serverelapsed, $clientelapsed) : $serverelapsed;
-        $allowedlength = $elapsed * $rate + 3.0;
+
+        // Only server time is authoritative. A forged client timestamp must never increase
+        // the amount of video that can be credited between two heartbeats.
+        $serverelapsed = $session->lastheartbeat
+            ? max(0, min(20, $now - (int)$session->lastheartbeat))
+            : 0;
+        $allowedlength = $serverelapsed * $rate + 1.0;
         $segmentlength = $end - $start;
 
         $segments = self::decode_segments($progress->watchedsegments);
@@ -106,6 +102,62 @@ class tracking_manager {
 
         $this->update_completion($activity, $cm, $userid);
         return $progress;
+    }
+
+    /**
+     * Return the activity-wide authoritative video duration.
+     *
+     * The browser is allowed to establish the duration only once for an activity. After that
+     * the server-stored value is used for every learner and later client reports are ignored.
+     * Saving it inside sourceconfig also means that changing the configured video naturally
+     * clears the stored duration because source_manager::normalise() rebuilds sourceconfig.
+     *
+     * @param stdClass $activity Activity record.
+     * @param float $reportedduration Duration reported by the player.
+     * @return float Authoritative duration in seconds.
+     */
+    private function get_authoritative_duration(stdClass $activity, float $reportedduration): float {
+        global $DB;
+
+        $config = json_decode((string)$activity->sourceconfig, true) ?: [];
+        if (!empty($config['duration']) && (float)$config['duration'] > 0) {
+            return (float)$config['duration'];
+        }
+
+        if (!is_finite($reportedduration) || $reportedduration <= 0) {
+            return 0.0;
+        }
+
+        // Serialise the first-duration write so two simultaneous first viewers cannot race.
+        $factory = \core\lock\lock_config::get_lock_factory('mod_videoerrorhunt');
+        $lock = $factory->get_lock('duration:' . $activity->id, 5);
+        if (!$lock) {
+            return 0.0;
+        }
+
+        try {
+            $sourceconfig = (string)$DB->get_field(
+                'videoerrorhunt',
+                'sourceconfig',
+                ['id' => $activity->id],
+                MUST_EXIST
+            );
+            $config = json_decode($sourceconfig, true) ?: [];
+
+            if (empty($config['duration']) || (float)$config['duration'] <= 0) {
+                $config['duration'] = round($reportedduration, 3);
+                $DB->set_field(
+                    'videoerrorhunt',
+                    'sourceconfig',
+                    json_encode($config, JSON_UNESCAPED_SLASHES),
+                    ['id' => $activity->id]
+                );
+            }
+
+            return (float)$config['duration'];
+        } finally {
+            $lock->release();
+        }
     }
 
     /**

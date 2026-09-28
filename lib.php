@@ -199,7 +199,7 @@ function videoerrorhunt_get_coursemodule_info(stdClass $cm): ?cached_cm_info {
     return $info;
 }
 
-function videoerrorhunt_get_completion_active_rule_descriptions(cached_cm_info $cm): array {
+function videoerrorhunt_get_completion_active_rule_descriptions($cm): array {
     if ((int)$cm->completion !== COMPLETION_TRACKING_AUTOMATIC || empty($cm->customdata['customcompletionrules'])) {
         return [];
     }

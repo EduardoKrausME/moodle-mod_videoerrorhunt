@@ -57,6 +57,22 @@ class backup_videoerrorhunt_activity_task extends backup_activity_task {
      * @return string Return value.
      */
     public static function encode_content_links($content): string {
+        global $CFG;
+
+        $base = preg_quote($CFG->wwwroot . '/mod/videoerrorhunt', '#');
+
+        // Access the list of Video Error Hunt activities in a course.
+        $pattern = '#(' . $base . '/index\\.php\\?id=)([0-9]+)#';
+        $content = preg_replace($pattern, '$@VIDEOERRORHUNTINDEX*$2@
+}
+, $content);
+
+        // Access an activity using its course module id.
+        $pattern = '#(' . $base . '/view\\.php\\?id=)([0-9]+)#';
+        $content = preg_replace($pattern, '$@VIDEOERRORHUNTVIEWBYID*$2@
+}
+, $content);
+
         return $content;
     }
 }

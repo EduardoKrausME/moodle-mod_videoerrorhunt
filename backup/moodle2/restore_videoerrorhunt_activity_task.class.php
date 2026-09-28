@@ -65,7 +65,18 @@ class restore_videoerrorhunt_activity_task extends restore_activity_task {
      * @return array Return value.
      */
     public static function define_decode_rules(): array {
-        return [];
+        return [
+            new restore_decode_rule(
+                'VIDEOERRORHUNTINDEX',
+                '/mod/videoerrorhunt/index.php?id=$1',
+                'course'
+            ),
+            new restore_decode_rule(
+                'VIDEOERRORHUNTVIEWBYID',
+                '/mod/videoerrorhunt/view.php?id=$1',
+                'course_module'
+            ),
+        ];
     }
 
     /**
