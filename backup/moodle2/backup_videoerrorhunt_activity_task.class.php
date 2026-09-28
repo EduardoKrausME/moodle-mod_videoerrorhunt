@@ -63,15 +63,13 @@ class backup_videoerrorhunt_activity_task extends backup_activity_task {
 
         // Access the list of Video Error Hunt activities in a course.
         $pattern = '#(' . $base . '/index\\.php\\?id=)([0-9]+)#';
-        $content = preg_replace($pattern, '$@VIDEOERRORHUNTINDEX*$2@
-}
-, $content);
+        $replacement = chr(36) . '@VIDEOERRORHUNTINDEX*' . chr(36) . '2@' . chr(36);
+        $content = preg_replace($pattern, $replacement, $content);
 
         // Access an activity using its course module id.
         $pattern = '#(' . $base . '/view\\.php\\?id=)([0-9]+)#';
-        $content = preg_replace($pattern, '$@VIDEOERRORHUNTVIEWBYID*$2@
-}
-, $content);
+        $replacement = chr(36) . '@VIDEOERRORHUNTVIEWBYID*' . chr(36) . '2@' . chr(36);
+        $content = preg_replace($pattern, $replacement, $content);
 
         return $content;
     }
