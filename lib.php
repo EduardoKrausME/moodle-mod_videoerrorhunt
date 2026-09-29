@@ -25,6 +25,12 @@
 use mod_videoerrorhunt\error_manager;
 use mod_videoerrorhunt\source_manager;
 
+/**
+ * Returns whether the plugin supports a given Moodle feature.
+ *
+ * @param string $feature Feature constant.
+ * @return bool|null True/false when supported explicitly, otherwise null.
+ */
 function videoerrorhunt_supports($feature) {
     return match ($feature) {
         FEATURE_MOD_ARCHETYPE => MOD_ARCHETYPE_ASSIGNMENT,
@@ -40,6 +46,13 @@ function videoerrorhunt_supports($feature) {
     };
 }
 
+/**
+ * Creates a new Video Error Hunt activity instance.
+ *
+ * @param stdClass $data Submitted activity data.
+ * @param mod_videoerrorhunt_mod_form|null $mform Activity form instance.
+ * @return int New activity instance id.
+ */
 function videoerrorhunt_add_instance(stdClass $data, ?mod_videoerrorhunt_mod_form $mform = null): int {
     global $DB;
     $now = time();
@@ -57,6 +70,13 @@ function videoerrorhunt_add_instance(stdClass $data, ?mod_videoerrorhunt_mod_for
     return $id;
 }
 
+/**
+ * Updates an existing Video Error Hunt activity instance.
+ *
+ * @param stdClass $data Submitted activity data.
+ * @param mod_videoerrorhunt_mod_form|null $mform Activity form instance.
+ * @return bool True on success.
+ */
 function videoerrorhunt_update_instance(stdClass $data, ?mod_videoerrorhunt_mod_form $mform = null): bool {
     global $DB;
     $data->id = $data->instance;
@@ -72,6 +92,12 @@ function videoerrorhunt_update_instance(stdClass $data, ?mod_videoerrorhunt_mod_
     return $result;
 }
 
+/**
+ * Extracts repeated error-definition fields from submitted activity data.
+ *
+ * @param stdClass $data Submitted activity data.
+ * @return array Extracted repeated fields.
+ */
 function videoerrorhunt_extract_form_arrays(stdClass $data): array {
     $fields = ['errorid', 'errortitle', 'errordescription', 'errorstart', 'errorend', 'errorpoints',
         'errorstartseconds', 'errorendseconds'];
@@ -84,6 +110,13 @@ function videoerrorhunt_extract_form_arrays(stdClass $data): array {
     return $out;
 }
 
+/**
+ * Saves the uploaded video file for an activity.
+ *
+ * @param stdClass $data Activity data.
+ * @param int $draftid Draft file area id.
+ * @return void
+ */
 function videoerrorhunt_save_video_file(stdClass $data, int $draftid): void {
     if (!isset($data->coursemodule)) {
         return;
@@ -97,6 +130,12 @@ function videoerrorhunt_save_video_file(stdClass $data, int $draftid): void {
     }
 }
 
+/**
+ * Deletes a Video Error Hunt activity instance and related data.
+ *
+ * @param int $id Activity instance id.
+ * @return bool True when the activity existed and was deleted.
+ */
 function videoerrorhunt_delete_instance(int $id): bool {
     global $DB;
     $activity = $DB->get_record('videoerrorhunt', ['id' => $id]);
@@ -117,6 +156,18 @@ function videoerrorhunt_delete_instance(int $id): bool {
     return true;
 }
 
+/**
+ * Serves files belonging to the Video Error Hunt activity.
+ *
+ * @param stdClass $course Course record.
+ * @param stdClass $cm Course module record.
+ * @param context $context Module context.
+ * @param string $filearea File area name.
+ * @param array $args Remaining file path arguments.
+ * @param bool $forcedownload Whether to force download.
+ * @param array $options File serving options.
+ * @return bool False when the requested file cannot be served.
+ */
 function mod_videoerrorhunt_pluginfile($course, $cm, $context, string $filearea, array $args,
                                        bool $forcedownload, array $options = []): bool {
     if ($context->contextlevel !== CONTEXT_MODULE || $filearea !== 'video') {
@@ -137,10 +188,25 @@ function mod_videoerrorhunt_pluginfile($course, $cm, $context, string $filearea,
     send_stored_file($file, 0, 0, $forcedownload, $options);
 }
 
+/**
+ * Returns file areas exposed by the activity.
+ *
+ * @param stdClass $course Course record.
+ * @param stdClass $cm Course module record.
+ * @param context $context Module context.
+ * @return array File area labels keyed by area name.
+ */
 function videoerrorhunt_get_file_areas($course, $cm, $context): array {
     return ['video' => get_string('videofile', 'videoerrorhunt')];
 }
 
+/**
+ * Creates or updates the activity grade item.
+ *
+ * @param stdClass $activity Activity record.
+ * @param array|null $grades Optional grades to push.
+ * @return int Gradebook update status.
+ */
 function videoerrorhunt_grade_item_update(stdClass $activity, ?array $grades = null): int {
     global $CFG;
     require_once($CFG->libdir . '/gradelib.php');
@@ -153,6 +219,14 @@ function videoerrorhunt_grade_item_update(stdClass $activity, ?array $grades = n
     return grade_update('mod/videoerrorhunt', $activity->course, 'mod', 'videoerrorhunt', $activity->id, 0, $grades, $item);
 }
 
+/**
+ * Updates activity grades in the Moodle gradebook.
+ *
+ * @param stdClass $activity Activity record.
+ * @param int $userid Optional user id to update.
+ * @param bool $nullifnone Whether to send a null grade when the user has no submission.
+ * @return void
+ */
 function videoerrorhunt_update_grades(stdClass $activity, int $userid = 0, bool $nullifnone = true): void {
     global $DB;
     $conditions = ['videoerrorhuntid' => $activity->id, 'submitted' => 1];
@@ -170,6 +244,12 @@ function videoerrorhunt_update_grades(stdClass $activity, int $userid = 0, bool 
     videoerrorhunt_grade_item_update($activity, $grades);
 }
 
+/**
+ * Deletes the activity grade item.
+ *
+ * @param stdClass $activity Activity record.
+ * @return int Gradebook update status.
+ */
 function videoerrorhunt_grade_item_delete(stdClass $activity): int {
     global $CFG;
     require_once($CFG->libdir . '/gradelib.php');
@@ -177,6 +257,12 @@ function videoerrorhunt_grade_item_delete(stdClass $activity): int {
         ['deleted' => 1]);
 }
 
+/**
+ * Returns cached course-module information for the activity.
+ *
+ * @param stdClass $cm Course module record.
+ * @return cached_cm_info|null Cached module information, or null when the activity does not exist.
+ */
 function videoerrorhunt_get_coursemodule_info(stdClass $cm): ?cached_cm_info {
     global $DB;
     $activity = $DB->get_record('videoerrorhunt', ['id' => $cm->instance],
@@ -199,6 +285,14 @@ function videoerrorhunt_get_coursemodule_info(stdClass $cm): ?cached_cm_info {
     return $info;
 }
 
+/**
+ * Returns descriptions for active custom completion rules.
+ *
+ * Moodle may pass either cm_info-compatible objects or stdClass records here.
+ *
+ * @param mixed $cm Course module information.
+ * @return array Human-readable completion rule descriptions.
+ */
 function videoerrorhunt_get_completion_active_rule_descriptions($cm): array {
     if ((int)$cm->completion !== COMPLETION_TRACKING_AUTOMATIC || empty($cm->customdata['customcompletionrules'])) {
         return [];
@@ -217,6 +311,15 @@ function videoerrorhunt_get_completion_active_rule_descriptions($cm): array {
     return $out;
 }
 
+/**
+ * Returns the completion state for a user.
+ *
+ * @param stdClass $course Course record.
+ * @param stdClass $cm Course module record.
+ * @param int $userid User id.
+ * @param bool $type Expected completion state requested by Moodle.
+ * @return bool Completion state.
+ */
 function videoerrorhunt_get_completion_state($course, $cm, int $userid, bool $type): bool {
     global $DB;
     $activity = $DB->get_record('videoerrorhunt', ['id' => $cm->instance], '*', MUST_EXIST);
