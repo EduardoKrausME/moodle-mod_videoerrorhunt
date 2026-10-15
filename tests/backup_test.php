@@ -35,6 +35,8 @@ require_once($CFG->dirroot . '/backup/util/includes/backup_includes.php');
 final class backup_test extends \advanced_testcase {
     /**
      * Video files with itemid zero must not be interpreted as structure elements.
+     *
+     * @covers \backup_videoerrorhunt_activity_structure_step::define_structure
      */
     public function test_activity_backup_with_uploaded_video(): void {
         global $USER;
