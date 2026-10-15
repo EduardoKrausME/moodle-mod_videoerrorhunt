@@ -73,7 +73,8 @@ class backup_videoerrorhunt_activity_structure_step extends backup_activity_stru
             $mark->annotate_ids('user', 'userid');
         }
         $activity->annotate_files('mod_videoerrorhunt', 'intro', null);
-        $activity->annotate_files('mod_videoerrorhunt', 'video', 0);
+        // Files in this area use itemid 0, not an XML element named 0.
+        $activity->annotate_files('mod_videoerrorhunt', 'video', null);
         return $this->prepare_activity_structure($activity);
     }
 }
