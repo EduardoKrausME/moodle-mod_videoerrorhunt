@@ -27,14 +27,6 @@ Requires Moodle 4.4 or later.
 The player/tracking architecture follows the same design goals as `mod_videoprogress`: server-authoritative watched
 segments, resume support, source abstraction, AJAX web services, completion and reporting.
 
-## Installation
-
-Copy the `videoerrorhunt` directory to `mod/videoerrorhunt` in the Moodle installation, then visit **Site
-administration > Notifications** to install or upgrade the database tables.
-
-The activity requires Moodle 4.4 or later. It does not require external libraries. YouTube and Vimeo playback load their
-official player APIs only when those sources are selected.
-
 ## Release packaging
 
 Build Marketplace archives with `./build-release.sh`. The script uses `git archive`, so repository metadata such as
